@@ -24,7 +24,7 @@ import { CampaignChart } from "@/components/campaign-chart"
 import { SyncStatsButton } from "@/components/sync-stats-button"
 import { EmailSearch } from "@/components/email-search" // Importar componente de búsqueda
 import { createPortalAClient } from "@/lib/supabase-client"
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 
 const FLORIDA_ANNUAL_REPORT_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
@@ -231,15 +231,15 @@ const CUSTOM_STATS_CAMPAIGNS: Record<
 }
 
 interface CampaignDetailPageProps {
-  params: { id: string }
-  searchParams: { page?: string }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ page?: string }>
 }
 
 export const dynamic = "force-dynamic"
 
 export default function ViewCampaignPage({ params, searchParams }: CampaignDetailPageProps) {
-  const { id } = params
-  const { page } = searchParams
+  const { id } = use(params)
+  const { page } = use(searchParams)
   const currentPage = Number.parseInt(page || "1", 10)
   const EVENTS_PER_PAGE = 50
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

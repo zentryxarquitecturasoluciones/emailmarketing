@@ -39,8 +39,8 @@ export const ZENTRYX_CONFIG: TenantConfig = {
     secondary: "141 239 7",
   },
   email: {
-    from: process.env.MAIL_FROM_EMAIL || "zentryxarquitecturadesoluciones@gmail.com",
-    replyTo: process.env.MAIL_REPLY_TO || "zentryxarquitecturadesoluciones@gmail.com",
+    from: process.env.MAIL_FROM_EMAIL || "hola@zentryxcorreo.ddnsgeek.com",
+    replyTo: process.env.MAIL_REPLY_TO || "zentryxarquitecturasoluciones@gmail.com",
   },
 }
 

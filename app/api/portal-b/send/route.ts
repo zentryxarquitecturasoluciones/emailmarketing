@@ -6,7 +6,7 @@ import { addUnsubscribeLink } from "@/lib/email-unsubscribe"
 export const maxDuration = 300
 
 const MAIL_API_KEY = process.env.MAIL_API_KEY || ""
-const FROM_DOMAIN = process.env.MAIL_FROM_DOMAIN || "zentryxmail.com"
+const FROM_DOMAIN = process.env.MAIL_FROM_DOMAIN || "zentryxcorreo.ddnsgeek.com"
 
 const BATCH_SIZE = 10
 const BATCH_DELAY_MS = 1500
@@ -203,9 +203,10 @@ export async function POST(request: NextRequest) {
 
     const configuredFrom = process.env.MAIL_FROM_EMAIL || ""
     const fromEmail =
-      campaign.from_email && String(campaign.from_email).includes("@")
+      configuredFrom ||
+      (campaign.from_email && String(campaign.from_email).includes("@")
         ? String(campaign.from_email).trim()
-        : configuredFrom || `${campaign.from_email || "info"}@${FROM_DOMAIN}`
+        : `${campaign.from_email || "info"}@${FROM_DOMAIN}`)
     const replyToEmail = campaign.reply_to && campaign.reply_to.includes("@") ? campaign.reply_to.trim() : fromEmail
 
     await supabase.from("campaigns").update({ status: "sending" }).eq("id", campaignId)

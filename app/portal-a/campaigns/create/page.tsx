@@ -38,8 +38,8 @@ export default async function PortalACreateCampaign({
               sourceCampaignId={sourceCampaignId}
               portalPath="/portal-a"
               defaultFromName="Data Zentryx"
-              defaultFromEmail="zentryxarquitecturadesoluciones@gmail.com"
-              defaultReplyTo="zentryxarquitecturadesoluciones@gmail.com"
+              defaultFromEmail="hola@zentryxcorreo.ddnsgeek.com"
+              defaultReplyTo="zentryxarquitecturasoluciones@gmail.com"
             />
           </Suspense>
         </div>

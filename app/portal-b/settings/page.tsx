@@ -14,8 +14,8 @@ export default function PortalBSettings() {
   const [saved, setSaved] = useState(false)
   const [settings, setSettings] = useState({
     default_from_name: "Data Zentryx",
-    default_from_email: "zentryxarquitecturadesoluciones@gmail.com",
-    default_reply_to: "zentryxarquitecturadesoluciones@gmail.com",
+    default_from_email: "hola@zentryxcorreo.ddnsgeek.com",
+    default_reply_to: "zentryxarquitecturasoluciones@gmail.com",
   })
 
   useEffect(() => {
