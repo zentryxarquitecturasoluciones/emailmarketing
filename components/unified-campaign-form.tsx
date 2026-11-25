@@ -21,6 +21,21 @@ interface EmailRecord {
   rowData?: Record<string, any>
 }
 
+type MessageTemplateId = "commercial-analysis" | "clean-b2b-data" | "custom"
+
+const MESSAGE_TEMPLATES: Record<Exclude<MessageTemplateId, "custom">, { label: string; subject: string; content: string }> = {
+  "commercial-analysis": {
+    label: "Análisis comercial (predeterminado)",
+    subject: "Commercial analysis and B2B data for better campaigns",
+    content: `<p>Hello, good morning:</p><p>Many companies invest in email marketing, but the real problem is not the email itself. The problem is reaching owners, managers, and decision-makers who are actually ready to buy.</p><p>At Data Zentryx, we turn data into commercial decisions. We analyze your commercial data, define your ideal customer profile, and segment contacts by industry, job title, company size, and location. Then we use verified B2B data and AI-powered solutions to clean lists, enrich records, personalize outreach, and prioritize the prospects with the highest potential value.</p><p>The result is simple: less budget wasted on contacts that never respond and more conversations with qualified prospects.</p><p>If you want to test it, we can provide a free commercial diagnostic and a sample of 20 B2B contacts based on your target industry and city. Just reply with those two details. No call, no long form, no obligation.</p><p>Best regards,<br><strong>Data Zentryx</strong><br>Commercial Analysis · B2B Data · AI Solutions<br>zentryxcorreo.ddnsgeek.com</p><p>If you do not wish to receive these messages, reply “stop” and we will remove you.</p>`,
+  },
+  "clean-b2b-data": {
+    label: "Datos B2B limpios",
+    subject: "Clean B2B data that turns cold lists into conversations",
+    content: `<p>Hello, good morning:</p><p>A clean B2B list does more than protect your sender reputation. It gives your sales team a clear path to the people who actually matter.</p><p>At Data Zentryx, we verify, clean, and enrich B2B contact data so your campaigns stop wasting budget on invalid addresses, outdated job titles, and contacts outside your ideal customer profile. We segment by industry, role, company size, and location, then prioritize the records with the strongest commercial potential.</p><p>With AI-assisted enrichment and deliverability checks, your outreach becomes more relevant, more targeted, and more likely to reach the inbox. The outcome is fewer bounced emails, sharper segmentation, and more qualified replies.</p><p>If you want to see the quality difference, reply with your target industry and city. We will send you 20 sample B2B contacts so you can test the data before committing any budget.</p><p>Best regards,<br><strong>Data Zentryx</strong><br>Clean B2B Data · Commercial Analysis · AI Solutions<br>zentryxcorreo.ddnsgeek.com</p><p>If you do not wish to receive these messages, reply “stop” and we will remove you.</p>`,
+  },
+}
+
 interface UnifiedCampaignFormProps {
   sourceCampaignId?: string
   portalPath: string
@@ -48,14 +63,15 @@ export function UnifiedCampaignForm({
   const [csvRecordCount, setCsvRecordCount] = useState(0)
   const [emailRecords, setEmailRecords] = useState<EmailRecord[]>([])
   const [pastedEmails, setPastedEmails] = useState("")
+  const [selectedTemplate, setSelectedTemplate] = useState<MessageTemplateId>("commercial-analysis")
 
   const [formData, setFormData] = useState({
     name: "",
-    subject: "",
+    subject: MESSAGE_TEMPLATES["commercial-analysis"].subject,
     fromName: defaultFromName,
     fromEmail: defaultFromEmail,
     replyTo: defaultReplyTo,
-    content: "",
+    content: MESSAGE_TEMPLATES["commercial-analysis"].content,
   })
 
   const getSupabaseClient = () => {
@@ -186,6 +202,18 @@ export function UnifiedCampaignForm({
     }
   }
 
+  const handleTemplateChange = (value: MessageTemplateId) => {
+    setSelectedTemplate(value)
+    if (value === "custom") return
+
+    const template = MESSAGE_TEMPLATES[value]
+    setFormData((prev) => ({
+      ...prev,
+      subject: template.subject,
+      content: template.content,
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -289,6 +317,7 @@ export function UnifiedCampaignForm({
       const { data: sourceCampaign } = await supabase.from("campaigns").select("*").eq("id", sourceCampaignId).single()
 
       if (sourceCampaign) {
+        setSelectedTemplate("custom")
         setFormData((prev) => ({
           ...prev,
           name: `${sourceCampaign.name} (Copy)`,
@@ -355,10 +384,26 @@ export function UnifiedCampaignForm({
         <CardHeader>
           <CardTitle className="text-foreground">Detalles de la campaña</CardTitle>
           <CardDescription>
-            Define el nombre y el asunto. Redacta en español el asunto y el contenido que recibirán los destinatarios.
+            Elige una plantilla, define el nombre y edita el asunto y el contenido antes de crear la campaña.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="messageTemplate">Mensaje</Label>
+            <select
+              id="messageTemplate"
+              value={selectedTemplate}
+              onChange={(e) => handleTemplateChange(e.target.value as MessageTemplateId)}
+              className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-foreground"
+            >
+              <option value="commercial-analysis">{MESSAGE_TEMPLATES["commercial-analysis"].label}</option>
+              <option value="clean-b2b-data">{MESSAGE_TEMPLATES["clean-b2b-data"].label}</option>
+              <option value="custom">Personalizado / copia de campaña</option>
+            </select>
+            <p className="text-xs text-muted-foreground">
+              Al elegir una opción se cargan el asunto y el contenido en inglés. Puedes editarlos libremente.
+            </p>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="name">Nombre de la campaña</Label>
             <Input
@@ -503,7 +548,7 @@ export function UnifiedCampaignForm({
         <CardHeader>
           <CardTitle className="text-foreground">Contenido del correo</CardTitle>
           <CardDescription>
-            Escribe el contenido del correo en español. Usa los campos del CSV para personalizar cada mensaje.
+            Contenido en inglés cargado desde la plantilla seleccionada. Usa los campos del CSV para personalizarlo.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
