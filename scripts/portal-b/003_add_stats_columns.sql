@@ -1,0 +1,10 @@
+-- Agregar columnas de estadísticas a campaigns si no existen
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS delivered_count INTEGER DEFAULT 0;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS opened_count INTEGER DEFAULT 0;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS clicked_count INTEGER DEFAULT 0;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS bounced_count INTEGER DEFAULT 0;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS complained_count INTEGER DEFAULT 0;
+
+-- Agregar columna updated_at a email_events si no existe
+ALTER TABLE email_events ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE email_events ADD COLUMN IF NOT EXISTS metadata JSONB;
